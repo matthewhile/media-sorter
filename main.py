@@ -3,12 +3,8 @@ from datetime import datetime
 import shutil
 import sys
 
-# TODO:
-# - Allow user to choose between 'copy' or 'move' action
-# - Improve exception handling 
-
-sourceDir = '/Users/mattw/OneDrive/Desktop/PhotoStorage'
-targetDir = '/Users/mattw/OneDrive/Desktop/Photos'
+sourceDir = '/Desktop/PhotoStorage'
+targetDir = 'Desktop/Photos'
 
 sPath = Path(sourceDir)
 tPath = Path(targetDir)
@@ -21,10 +17,19 @@ if not tPath.exists():
     print("Target directory not found!") 
     sys.exit(0)
 
-print("File transfer started...")
+def getAction():
+    while(True):
+        action = input("Enter C to copy or M to move: ")
+        if action in ("C", "c", "M", "m"):
+            return action
+        print("Invalid input!")
 
 files = sPath.iterdir()
 count = 0
+
+action = getAction()
+
+print("File transfer started...")
 
 for f in files:
     try:
@@ -39,8 +44,10 @@ for f in files:
         
         yPath.mkdir(parents = True, exist_ok = True)
 
-        shutil.copy2(f, yPath)
-        #shutil.move(f, yPath)
+        if action == "C" or action == "c":
+            shutil.copy2(f, yPath)
+        else:
+            shutil.move(f, yPath)
 
     except OSError as err:
         print("Filesystem error occured processing file: " + f.name + "\nError message: ", err)
